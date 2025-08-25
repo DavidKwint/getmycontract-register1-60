@@ -22,6 +22,39 @@ const Header = () => {
       document.documentElement.classList.add('light-mode');
     }
   }, [isDarkMode]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['home', 'features', 'pricing'];
+      const scrollPosition = window.scrollY + 100; // Offset for header height
+      
+      // Check if we're at the top of the page
+      if (window.scrollY < 100) {
+        setActivePage('home');
+        return;
+      }
+      
+      // Find which section is currently in view
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          const elementTop = rect.top + window.scrollY;
+          const elementBottom = elementTop + rect.height;
+          
+          if (scrollPosition >= elementTop && scrollPosition < elementBottom) {
+            setActivePage(section);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial position
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
   const handleNavClick = (page: string) => (e: React.MouseEvent) => {
     e.preventDefault();
